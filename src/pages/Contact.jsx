@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import emailjs from 'emailjs-com';
 import './Contact.css';
 
 const Contact = () => {
@@ -15,13 +18,34 @@ const Contact = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
-    // Add toast or success message here if desired
-    setFormData({ name: '', email: '', message: '' });
+
+    const templateParams = {
+      from_name: formData.name,
+      from_email: formData.email,
+      message: formData.message
+    };
+
+    emailjs.send(
+      'service_w729pbf',      // 🔁 Replace this
+      'template_dkb93xl',     // 🔁 Replace this
+      templateParams,
+      'pp0AdXy6jnBr9cV1a'       // 🔁 Replace this
+    ).then(
+      (response) => {
+        console.log('SUCCESS!', response.status, response.text);
+        toast.success('✅ Message sent successfully!');
+        setFormData({ name: '', email: '', message: '' });
+      },
+      (err) => {
+        console.error('FAILED...', err);
+        toast.error('❌ Failed to send message. Please try again.');
+      }
+    );
   };
 
   return (
     <div className="contact-page">
+      <ToastContainer />
       <h1>Contact Us</h1>
       <p>Got a question, feedback, or just want to say hi? We'd love to hear from you.</p>
 
